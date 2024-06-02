@@ -61,32 +61,6 @@ X = df['Avg_Connected_UEs']
 predicted_values = {}
 best_models = {}
 
-# Training models and saving best models
-for column in tqdm(columns_to_iterate, leave=False):
-    y = df[column]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    models = {
-        'Random Forest': (RandomForestRegressor(), {'n_estimators': [50, 100, 150]}),
-        'XGBoost': (xgb.XGBRegressor(), {'learning_rate': [0.1, 0.01], 'max_depth': [3, 5, 7]})
-    }
-    
-    best_score = -float('inf')
-    best_model = None
-    
-    for name, (model, parameters) in models.items():
-        grid_search = GridSearchCV(model, parameters, cv=5, scoring='neg_mean_squared_error')
-        grid_search.fit(X_train.values.reshape(-1, 1), y_train)
-        
-        if grid_search.best_score_ > best_score:
-            best_score = grid_search.best_score_
-            best_model = grid_search.best_estimator_
-    
-    best_models[column] = best_model
-
-# Save best models to file
-joblib.dump(best_models, 'best_models.pkl')
-
 # Load best models and make predictions on unseen data
 best_models = joblib.load('best_models.pkl')
 
@@ -94,8 +68,9 @@ best_models = joblib.load('best_models.pkl')
 all_predicted_values = []
 
 # Get project details for Pub/Sub
-project_id = "gcp-dataeng-demos-355417"
-topic_id = "pubsub_dataflow_demo"
+#FILL #FILL  #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL
+project_id = ""
+topic_id = ""
 
 # Create a Publisher client
 publisher = pubsub_v1.PublisherClient()
@@ -123,11 +98,18 @@ for x_unseen in X_unseen:
     # Publish the message to Pub/Sub
     data_str = json_output
     data = data_str.encode("utf-8")
-    future = publisher.publish(topic_path, data, origin="python-sample", username="gcp")
-    future.result()  # Ensure the message is published
+    print(data)
+    
+    time.sleep(1)
+    
+    future = publisher.publish(topic_path, data)
+    print(future.result())  # Ensure the message is published
     
     # Sleep for 1 minute
     time.sleep(60)
+
+print("Messages Published")
+          
 
 
 
