@@ -4,3 +4,4 @@ scikit-learn
 XGBoost
 tqdm
 git+https://github.com/TimeSynth/TimeSynth.git
+google-cloud-pubsub
