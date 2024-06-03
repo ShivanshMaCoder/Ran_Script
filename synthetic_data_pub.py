@@ -4,6 +4,7 @@ from tqdm.auto import tqdm
 import timesynth as ts
 import json
 import time
+import random
 import datetime as dt
 from google.cloud import pubsub_v1
 import joblib
@@ -36,6 +37,38 @@ data = df.drop([
     'HO_fail_PCT_InterFreq',
     'day'
 ], axis=1)
+
+#Adding mttr values
+mttr_values = np.random.randint(4, 25, size=1440)
+mttr_values = mttr_values.tolist()
+
+#Adding Score
+G_Score = np.random.randint(80, 101, size=1440)
+score_values = G_Score.tolist()
+
+#Adding Jitter
+num_rows = 1440 # Example size, adjust as needed
+low_range_percentage = 0.7
+low_range = (30, 50)
+full_range = (20, 80)
+num_low_range = int(num_rows * low_range_percentage)
+num_full_range = num_rows - num_low_range
+low_range_values = [random.randint(*low_range) for _ in range(num_low_range)]
+full_range_values = [random.randint(*full_range) for _ in range(num_full_range)]
+jitter = low_range_values + full_range_values
+random.shuffle(jitter)
+
+#Adding RTT
+num_rows = 1440
+low_range_percentage = 0.7
+low_range = (100, 200)
+full_range = (80, 220)
+num_low_range = int(num_rows * low_range_percentage)
+num_full_range = num_rows - num_low_range
+low_range_values = [random.randint(*low_range) for _ in range(num_low_range)]
+full_range_values = [random.randint(*full_range) for _ in range(num_full_range)]
+rtt_values = low_range_values + full_range_values
+random.shuffle(rtt_values)
 
 # Identify columns to iterate over
 columns_to_iterate = []
@@ -78,18 +111,44 @@ publisher = pubsub_v1.PublisherClient()
 # Construct the topic path
 topic_path = publisher.topic_path(project_id, topic_id)
 
-for x_unseen in X_unseen:
+for idx, x_unseen in enumerate(X_unseen):
     single_predicted_values = {'Avg_Connected_UEs': float(x_unseen)}
     for column, model in best_models.items():
         x_unseen_reshaped = np.array([[x_unseen]])
         prediction = model.predict(x_unseen_reshaped)[0]
         single_predicted_values[column] = float(prediction)  # Convert to float to ensure JSON serializability
-    
-    # Append the predictions to the list
-    all_predicted_values.append(single_predicted_values)
 
-    #adding network-id
+    # Add the additional key-value pairs
     single_predicted_values['network_id'] = '154.29.15.1'
+
+    single_predicted_values['Cell Availability%'] = 100
+  
+    if idx < len(mttr_values):
+        single_predicted_values['MTTR'] = float(mttr_values[idx])
+
+    if idx < len(jitter):
+        single_predicted_values['Jitter'] = float(jitter[idx])
+
+    if idx < len(rtt_values):
+        single_predicted_values['RTT'] = float(rtt_values[idx])
+
+    if idx < len(score_values):
+        single_predicted_values['Score'] = float(score_values[idx])
+
+    if score_values[idx] >= 97:
+            reliability = "good"
+    elif score_values[idx] >= 92:
+        reliability = "fair"
+    elif score_values[idx] >= 88:
+        reliability = "average"
+    elif score_values[idx] >= 84:
+        reliability = "poor"
+    elif score_values[idx] >= 80:
+        reliability = "very poor"
+    else:
+        reliability = ""
+        
+    single_predicted_values['5g_reliability_carrier'] = reliability    
     
     # Convert to JSON and print
     json_output = json.dumps(single_predicted_values, indent=4)
