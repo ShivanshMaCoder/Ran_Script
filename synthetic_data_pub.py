@@ -6,17 +6,18 @@ import json
 import time
 import random
 import datetime as dt
-from google.cloud import pubsub_v1
 import joblib
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
 import xgboost as xgb
+
 
 # Load data
 df = pd.read_csv('Airwave_OG.csv')
 
 # Replace spaces with underscores in column names
 df.columns = df.columns.str.replace(' ', '_')
+df.columns = df.columns.str.replace('%', '_Pct')
 
 # Interpolate missing values
 df.interpolate(inplace=True)
@@ -33,7 +34,7 @@ data = df.drop([
     'Pct_CA_ScheduledUE_with_4_EScell_DL',
     'Cat_M1_Bearer_Setup_Failure_pct',
     '_80th_percentile_traffic',
-    'SIP_DC%',
+    'SIP_DC_Pct',
     'Pct_CA_ScheduledUE_with_1_Scell_UL',
     'Pct_CA_ScheduledUE_with_2_Scell_UL',
     'Pct_CA_ScheduledUE_with_3_Scell_UL',
@@ -108,7 +109,7 @@ all_predicted_values = []
 # Get project details for Pub/Sub
 #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL
 project_id = "networkperformanceassessment"
-topic_id = ""
+topic_id = "ran"
 
 # Create a Publisher client
 publisher = pubsub_v1.PublisherClient()
