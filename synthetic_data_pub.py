@@ -35,7 +35,9 @@ data = df.drop([
     'Pct CA ScheduledUE with 2 Scell UL',
     'Pct CA ScheduledUE with 3 Scell UL',
     'HO_fail_PCT_InterFreq',
-    'day'
+    'day',
+    'hr',
+    'weekend'
 ], axis=1)
 
 #Adding mttr values
