@@ -15,6 +15,9 @@ import xgboost as xgb
 # Load data
 df = pd.read_csv('Airwave_OG.csv')
 
+# Replace spaces with underscores in column names
+df.columns = df.columns.str.replace(' ', '_')
+
 # Interpolate missing values
 df.interpolate(inplace=True)
 
