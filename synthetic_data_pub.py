@@ -123,9 +123,6 @@ for idx, x_unseen in enumerate(X_unseen):
         prediction = model.predict(x_unseen_reshaped)[0]
         single_predicted_values[column] = float(prediction)  # Convert to float to ensure JSON serializability
 
-    # Add the additional key-value pairs
-    single_predicted_values['network_id'] = '154.29.15.1'
-
     single_predicted_values['Cell Availability%'] = 100
   
     if idx < len(mttr_values):
@@ -140,20 +137,7 @@ for idx, x_unseen in enumerate(X_unseen):
     if idx < len(score_values):
         single_predicted_values['Score'] = float(score_values[idx])
 
-    if score_values[idx] >= 97:
-            reliability = "good"
-    elif score_values[idx] >= 92:
-        reliability = "fair"
-    elif score_values[idx] >= 88:
-        reliability = "average"
-    elif score_values[idx] >= 84:
-        reliability = "poor"
-    elif score_values[idx] >= 80:
-        reliability = "very poor"
-    else:
-        reliability = ""
-        
-    single_predicted_values['5g_reliability_carrier'] = reliability    
+    single_predicted_values['network_id'] = '154.29.15.1'
     
     # Convert to JSON and print
     json_output = json.dumps(single_predicted_values, indent=4)
@@ -165,7 +149,7 @@ for idx, x_unseen in enumerate(X_unseen):
 
     time.sleep(1)
     
-    future = publisher.publish(topic_path, data")
+    future = publisher.publish(topic_path, data)
     future.result()  # Ensure the message is published
     
     # Sleep for 1 minute
