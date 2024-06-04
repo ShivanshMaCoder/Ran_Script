@@ -23,27 +23,27 @@ df.interpolate(inplace=True)
 
 # Drop unnecessary columns
 data = df.drop([
-    'SIP Dropped Calls',
-    'Cat M1 Bearer Drop pct',
-    'Pct CA ScheduledUE with 0 EScell DL',
-    'Pct CA ScheduledUE with 1 EScell DL',
-    'Pct CA ScheduledUE with 2 EScell DL',
-    'Pct CA ScheduledUE with 3 EScell DL',
-    'SIP Calls with a Leg',
-    'Pct CA ScheduledUE with 4 EScell DL',
-    'Cat M1 Bearer Setup Failure pct',
+    'SIP_Dropped_Calls',
+    'Cat_M1_Bearer_Drop_pct',
+    'Pct_CA_ScheduledUE_with_0_EScell_DL',
+    'Pct_CA_ScheduledUE_with_1_EScell_DL',
+    'Pct_CA_ScheduledUE_with_2_EScell_DL',
+    'Pct_CA_ScheduledUE_with_3_EScell_DL',
+    'SIP_Calls_with_a_Leg',
+    'Pct_CA_ScheduledUE_with_4_EScell_DL',
+    'Cat_M1_Bearer_Setup_Failure_pct',
     '_80th_percentile_traffic',
-    'SIP DC%',
-    'Pct CA ScheduledUE with 1 Scell UL',
-    'Pct CA ScheduledUE with 2 Scell UL',
-    'Pct CA ScheduledUE with 3 Scell UL',
+    'SIP_DC%',
+    'Pct_CA_ScheduledUE_with_1_Scell_UL',
+    'Pct_CA_ScheduledUE_with_2_Scell_UL',
+    'Pct_CA_ScheduledUE_with_3_Scell_UL',
     'HO_fail_PCT_InterFreq',
     'day',
     'hr',
     'weekend'
 ], axis=1)
 
-#Adding mttr values
+#Adding MTTR values
 mttr_values = np.random.randint(4, 25, size=1440)
 mttr_values = mttr_values.tolist()
 
@@ -107,7 +107,7 @@ all_predicted_values = []
 
 # Get project details for Pub/Sub
 #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL #FILL
-project_id = ""
+project_id = "networkperformanceassessment"
 topic_id = ""
 
 # Create a Publisher client
