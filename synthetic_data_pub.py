@@ -124,7 +124,7 @@ for idx, x_unseen in enumerate(X_unseen):
         prediction = model.predict(x_unseen_reshaped)[0]
         single_predicted_values[column] = float(prediction)  # Convert to float to ensure JSON serializability
 
-    single_predicted_values['Cell Availability%'] = 100
+    single_predicted_values['Cell_Availability_Pct'] = 100
   
     if idx < len(mttr_values):
         single_predicted_values['MTTR'] = float(mttr_values[idx])
