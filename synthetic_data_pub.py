@@ -25,6 +25,8 @@ df.interpolate(inplace=True)
 # Drop unnecessary columns
 data = df.drop([
     'SIP_Dropped_Calls',
+    'Bearer_Setup_Failure_Voice_Num',
+    'Bearer_Setup_Failure_Voice_Pct',
     'Cat_M1_Bearer_Drop_pct',
     'Pct_CA_ScheduledUE_with_0_EScell_DL',
     'Pct_CA_ScheduledUE_with_1_EScell_DL',
@@ -103,6 +105,14 @@ best_models = {}
 #Load best models and make predictions on unseen data
 best_models = joblib.load('best_models.pkl')
 
+df = pd.read_pickle('best_models.pkl')
+
+# Rename the column
+df.rename(columns={'PCT_Time_MIMO': 'Pct_Time_MIMO'}, inplace=True)
+
+# Save the DataFrame back to the .pkl file
+df.to_pickle('best_models.pkl')
+
 # Prepare to store predictions for each time point in X_unseen
 all_predicted_values = []
 
@@ -124,7 +134,7 @@ for idx, x_unseen in enumerate(X_unseen):
         prediction = model.predict(x_unseen_reshaped)[0]
         single_predicted_values[column] = float(prediction)  # Convert to float to ensure JSON serializability
 
-    single_predicted_values['Cell Availability%'] = 100
+    single_predicted_values['Cell Availability_Pct'] = 100
   
     if idx < len(mttr_values):
         single_predicted_values['MTTR'] = float(mttr_values[idx])
