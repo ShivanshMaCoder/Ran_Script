@@ -18,6 +18,7 @@ df = pd.read_csv('Airwave_OG.csv')
 # Replace spaces with underscores in column names
 df.columns = df.columns.str.replace(' ', '_')
 df.columns = df.columns.str.replace('%', '_Pct')
+df.columns = df.columns.str.replace('PCT', 'Pct')
 
 # Interpolate missing values
 df.interpolate(inplace=True)
@@ -40,7 +41,7 @@ data = df.drop([
     'Pct_CA_ScheduledUE_with_1_Scell_UL',
     'Pct_CA_ScheduledUE_with_2_Scell_UL',
     'Pct_CA_ScheduledUE_with_3_Scell_UL',
-    'HO_fail_PCT_InterFreq',
+    'HO_fail_Pct_InterFreq',
     'day',
     'hr',
     'weekend'
@@ -105,14 +106,6 @@ best_models = {}
 #Load best models and make predictions on unseen data
 best_models = joblib.load('best_models.pkl')
 
-df = pd.read_pickle('best_models.pkl')
-
-# Rename the column
-df.rename(columns={'PCT_Time_MIMO': 'Pct_Time_MIMO'}, inplace=True)
-
-# Save the DataFrame back to the .pkl file
-df.to_pickle('best_models.pkl')
-
 # Prepare to store predictions for each time point in X_unseen
 all_predicted_values = []
 
@@ -134,7 +127,7 @@ for idx, x_unseen in enumerate(X_unseen):
         prediction = model.predict(x_unseen_reshaped)[0]
         single_predicted_values[column] = float(prediction)  # Convert to float to ensure JSON serializability
 
-    single_predicted_values['Cell Availability_Pct'] = 100
+    single_predicted_values['Cell_Availability_Pct'] = 100
   
     if idx < len(mttr_values):
         single_predicted_values['MTTR'] = float(mttr_values[idx])
@@ -148,6 +141,7 @@ for idx, x_unseen in enumerate(X_unseen):
     if idx < len(score_values):
         single_predicted_values['Score'] = float(score_values[idx])
 
+    #FILL new network_ids
     single_predicted_values['network_id'] = '154.29.15.1'
     
     # Convert to JSON and print
@@ -165,7 +159,3 @@ for idx, x_unseen in enumerate(X_unseen):
     
     # Sleep for 1 minute
     time.sleep(60)
-
-
-
-
